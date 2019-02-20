@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import SideBar from './SideBar'
-import { COMMUNITY_CHAT, MESSAGE_SENT, MESSAGE_RECIEVED, TYPING } from '../../Events'
+import { COMMUNITY_CHAT, MESSAGE_SENT, MESSAGE_RECIEVED } from '../../Events'
 import ChatHeading from './ChatHeading'
 import Messages from '../messages/Messages'
 import MessageInput from '../messages/MessageInput'
@@ -33,9 +33,7 @@ export default class ChatContainer extends Component {
     this.setState({chats:newChats})
 
     const messageEvent = `${MESSAGE_RECIEVED}-${chat.id}`
-    const typingEvent = `${TYPING}-${chat.id}`
 
-    socket.on(typingEvent)
     socket.on(messageEvent, this.addMessageToChat(chat.id))
   }
 
@@ -52,18 +50,9 @@ export default class ChatContainer extends Component {
     }
   }
 
-  updateTypingInChat = (chatId)=>{
-
-  }
-
   sendMessage = (chatId, message)=>{
     const { socket } = this.props
     socket.emit(MESSAGE_SENT, {chatId, message} )
-  }
-
-  sendTyping = (chatId, isTyping)=>{
-    const { socket } = this.props
-    socket.emit(TYPING, {chatId, isTyping})
   }
 
   setActiveChat = (activeChat)=>{
@@ -90,7 +79,6 @@ export default class ChatContainer extends Component {
                 <Messages
                   messages={activeChat.messages}
                   user={user}
-                  typingUsers={activeChat.typingUsers}
                   />
                 <MessageInput
                   sendMessage={
@@ -98,11 +86,7 @@ export default class ChatContainer extends Component {
                       this.sendMessage(activeChat.id, message)
                     }
                   }
-                  sendTyping={
-                    (isTyping)=>{
-                      this.sendTyping(activeChat.id, isTyping)
-                    }
-                  }
+                  
                   />
 
               </div>
